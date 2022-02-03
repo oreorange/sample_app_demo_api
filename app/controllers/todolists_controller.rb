@@ -5,7 +5,15 @@ class TodolistsController < ApplicationController
 
   def create
     list = List.new(list_params)
+    # Natural Language API 使用
+    list.score = Language.get_data(list_params[:body])  #この行を追加
     list.save
+    # Vision API 使用
+    tags = Vision.get_image_data(list.image)    
+    tags.each do |tag|
+      list.tags.create(name: tag)
+    end　#この行までを追加
+    
     redirect_to todolist_path(list.id)
   end
 
